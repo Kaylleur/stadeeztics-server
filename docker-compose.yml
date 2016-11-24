@@ -1,0 +1,8 @@
+mongodb:
+    image: mongo:latest
+    restart: always
+    volumes:
+        - /opt/mongodb
+    ports:
+        - 27017:27017
+        - 28017:28017
