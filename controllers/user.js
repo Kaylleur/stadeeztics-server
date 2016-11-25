@@ -1,32 +1,42 @@
 /**
  * Created by Thomas on 24/11/2016.
  */
+var mongoose = require('mongoose');
 var userModel = require('../models/user');
+var bluebird = require('bluebird'); // Promises
+var DZ = require('node-deezer');
+var deezer = new DZ();
+var sha512 = require('sha512');
 
-var request = require('request');
+bluebird.promisifyAll(deezer);
+
 var config = require('../config/configuration')
 
 module.exports = {
-    signIn : function(req,res,next){
-        request('https://connect.deezer.com/oauth/access_token.php?' +
-            'app_id=' + config.app.id +
-            '&secret=' + config.app.secret +
-            '&output=json' +
-            '&code=' + req.params.token,
-            function (error, response, body) {
-                if (!error && response.statusCode == 200) {
-                    userModel.add({
-                        name:'undefined',
-                        password: 'undefined',
-                        mail:'undefined',
-                        token: JSON.parse(body).access_token
-                    },function(err,user){
-                        if(!err){
-                             res.send({message:'Successful'})
-                        }
-                    })
-                }
-            });
+    addDeezerAccount : function(req,res,next){
 
+        deezer.createSessionAsync(config.app.id,config.app.secret,req.params.code)
+            .then(function (result) {
+                return deezer.requestAsync(result.accessToken,{
+                    resource:'user/me',
+                    method:'get'
+                }).then(function (user) {
+                    //add this user
+                    res.status(200).send(user);
+                })
+            })
+            .catch(function (err) {
+                console.log(err)
+                res.send(500, err);
+            });
+    },
+    signUp : function(req,res,next){
+        var user = req.body;
+        user.password = sha512(config.salt.before + req.body + config.salt.after).toString('hex');
+        userModel.add(user,function(err,result){
+            if(err)res.status(400).send(err);
+
+            res.status(200).send(result);
+        });
     }
 };

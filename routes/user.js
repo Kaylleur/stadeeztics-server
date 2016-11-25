@@ -6,6 +6,7 @@ var router = express.Router();
 var userController = require('../controllers/user');
 
 /* GET home page. */
-router.get('/getAccess/:token', userController.signIn);
+router.post('/',userController.signUp);
+router.get('/deezer/:code', userController.signIn);
 
 module.exports = router;

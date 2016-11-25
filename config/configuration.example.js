@@ -5,5 +5,9 @@ module.exports = {
     app : {
         id:'YOUR_APP_ID',
         secret:'YOUR_SECRET_KEY'
+    },
+    salt : {
+        before : 'SALT_BEFORE',
+        after : 'SALT_AFTER'
     }
 };
