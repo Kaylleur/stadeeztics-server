@@ -10,3 +10,6 @@ var userSchema = Schema({
     mail: String,
     deezerAccounts : [Schema.Types.ObjectId]
 });
+
+
+module.exports = userSchema;

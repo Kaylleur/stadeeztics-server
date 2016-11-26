@@ -7,6 +7,6 @@ var userController = require('../controllers/user');
 
 /* GET home page. */
 router.post('/',userController.signUp);
-router.get('/deezer/:code', userController.signIn);
+router.get('/deezer/:code', userController.addDeezerAccount);
 
 module.exports = router;

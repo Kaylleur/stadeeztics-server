@@ -6,11 +6,10 @@ var userModel = require('../models/user');
 var bluebird = require('bluebird'); // Promises
 var DZ = require('node-deezer');
 var deezer = new DZ();
+var config = require('../config/configuration')
 var sha512 = require('sha512');
 
 bluebird.promisifyAll(deezer);
-
-var config = require('../config/configuration')
 
 module.exports = {
     addDeezerAccount : function(req,res,next){
@@ -21,7 +20,7 @@ module.exports = {
                     resource:'user/me',
                     method:'get'
                 }).then(function (user) {
-                    //add this user
+                    //add this deezer account to user
                     res.status(200).send(user);
                 })
             })
@@ -34,7 +33,10 @@ module.exports = {
         var user = req.body;
         user.password = sha512(config.salt.before + req.body + config.salt.after).toString('hex');
         userModel.add(user,function(err,result){
-            if(err)res.status(400).send(err);
+            if(err){
+                res.status(400).send(err);
+                return;
+            }
 
             res.status(200).send(result);
         });
