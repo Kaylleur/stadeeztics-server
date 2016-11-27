@@ -9,6 +9,8 @@ var userSchema = Schema({
     password : String,
     mail: String,
     deezerAccounts : [Schema.Types.ObjectId]
+},{
+    versionKey: false
 });
 
 

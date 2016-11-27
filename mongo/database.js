@@ -2,6 +2,7 @@
  * Created by Thomas on 24/11/2016.
  */
 const mongoose = require('mongoose');
+// mongoose.Promise = require('bluebird'); //setup promise
 
 module.exports = {
     connect : function() {

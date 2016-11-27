@@ -9,5 +9,15 @@ module.exports = {
     salt : {
         before : 'SALT_BEFORE',
         after : 'SALT_AFTER'
+    },
+    jwt : {
+        secret : 'SESSION_SECRET_ENCODE JWT'
+    },
+    session : {
+        algorithm : 'HS512',
+        expiresIn : '8h',
+        issuer : os.hostname(),
+        subject : 'session',
+        audience : '' //list of possible recipient ?
     }
 };

@@ -14,7 +14,7 @@ module.exports = {
             .then(user => callback(null,user));
     },
     signIn: function(name,password,callback){
-        User.find({name:name,password:password})
+        User.findOne({name:name,password:password},{name:1,mail:1})
             .then( user => callback(null,user));
     },
     add: function(user,callback){
