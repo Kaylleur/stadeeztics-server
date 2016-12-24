@@ -7,7 +7,7 @@ var router = express.Router();
 var userController = require('../controllers/user');
 
 /* GET home page. */
-router.post('/',userController.signUp);
 router.post('/deezer', userController.addDeezerAccount);
+router.get('/', userController.getAllUsers);
 
 module.exports = router;

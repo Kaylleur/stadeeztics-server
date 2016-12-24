@@ -7,6 +7,7 @@ var router = express.Router();
 var sessionController = require('../controllers/session');
 
 /* GET home page. */
-router.post('/',sessionController.signIn);
+router.post('/signIn',sessionController.signIn);
+router.post('/',sessionController.signUp);
 
 module.exports = router;

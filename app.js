@@ -8,6 +8,8 @@ var index = require('./routes/index');
 var userRoutes = require('./routes/user');
 var sessionRoutes = require('./routes/session');
 
+var authenticator = require('./utils/authenticator');
+
 var app = express();
 app.set('env','development');
 
@@ -18,6 +20,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+/**
+ * Route to cover
+ */
+app.use('/user', authenticator);
+
+/**
+ * Routing
+ */
 app.use('/', index);
 app.use('/user', userRoutes);
 app.use('/session', sessionRoutes);

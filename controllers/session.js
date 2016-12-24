@@ -22,14 +22,28 @@ module.exports = {
                 }
                 var token = jwt.sign(result,config.jwt.secret,config.session);
 
-                res.send({token : token});
 
-                //console.log(jwt.verify(token,config.jwt.secret,{algorithms:'HS512'}));
+
+                res.send({token : token});
 
             }catch (exception){
                 console.error(exception);
                 res.status(500).send(exception);
             }
+        });
+    },
+
+
+    signUp : function(req,res,next){
+        var user = req.body;
+        if(user.password)user.password = sha512(config.salt.before + req.body.password + config.salt.after).toString('hex');
+        userModel.add(user,function(err,result){
+            if(err){
+                res.status(400).send(err);
+                return;
+            }
+
+            res.status(200).send(result);
         });
     }
 };
