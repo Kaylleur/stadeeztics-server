@@ -9,6 +9,7 @@ var userRoutes = require('./routes/user');
 var sessionRoutes = require('./routes/session');
 
 var app = express();
+app.set('env','development');
 
 // uncomment after placing your favicon in /public
 app.use(logger('dev'));

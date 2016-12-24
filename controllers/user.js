@@ -31,12 +31,15 @@ module.exports = {
     },
     signUp : function(req,res,next){
         var user = req.body;
-        user.password = sha512(config.salt.before + req.body + config.salt.after).toString('hex');
+        if(user.password)user.password = sha512(config.salt.before + req.body.password + config.salt.after).toString('hex');
         userModel.add(user,function(err,result){
+            console.log("callback called");
             if(err){
+                console.log('i send error');
                 res.status(400).send(err);
                 return;
             }
+            console.log('trying to be here');
 
             res.status(200).send(result);
         });

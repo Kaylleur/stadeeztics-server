@@ -5,9 +5,9 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var userSchema = Schema({
-    name: String,
-    password : String,
-    mail: String,
+    name: { type: String, index: true, required : [ true, "Name is missing"] },
+    password : { type : String, required : [ true, "Password is missing"]},
+    mail: { type : String , required : [ true, "Mail is missing"]},
     deezerAccounts : [Schema.Types.ObjectId]
 },{
     versionKey: false

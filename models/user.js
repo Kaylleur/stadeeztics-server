@@ -19,9 +19,9 @@ module.exports = {
     },
     add: function(user,callback){
         var newUser = new User(user);
-        newUser.save()
-            .then(callback(null,newUser))
-            .catch(err => callback(err,newUser));
+        newUser.save(err => callback(err,user)); //should check that with Paul <3
+            // .then(callback(null,newUser))
+            // .catch(err => callback(err,user));
     },
     edit: function(id, body, callback){
         User.findOneAndUpdate({_id: new ObjectId(id)},{ $set : body },callback);
