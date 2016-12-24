@@ -22,10 +22,7 @@ module.exports = {
                 }
                 var token = jwt.sign(result,config.jwt.secret,config.session);
 
-
-
                 res.send({token : token});
-
             }catch (exception){
                 console.error(exception);
                 res.status(500).send(exception);

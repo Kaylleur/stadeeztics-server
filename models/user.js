@@ -24,7 +24,10 @@ module.exports = {
             // .catch(err => callback(err,user));
     },
     edit: function(id, body, callback){
-        User.findOneAndUpdate({_id: new ObjectId(id)},{ $set : body },callback);
+        User.findOneAndUpdate({_id: new ObjectId(id)},{ $set : body },{},callback);
+    },
+    addDeezerAccount : function(id,body){
+        return User.findOneAndUpdate({_id: new ObjectId(id)},{$push:{deezerAccounts:body}},{});
     }
 
 };
