@@ -13,28 +13,48 @@ var sha512 = require('sha512');
 bluebird.promisifyAll(deezer);
 
 module.exports = {
-    addDeezerAccount : function(req,res,next){ //@TODO should simplify that =(
+    addDeezerAccount : function(req,res,next){
+        var token,deezerAccountFromApi;
         deezer.createSessionAsync(config.app.id,config.app.secret,req.query.code) //get token
-            .then(function (result) {
-                return deezer.requestAsync(result.accessToken,{ //get info about deezer account
-                    resource:'user/me',
-                    method:'get'
-                }).then(function (deezerUser) { //save deezer account to db
-                    deezerAccountModel.add(deezerUser,function(err,result){
-                        if(err) res.status(400).send(err);
+            .then(result => { //get info about deezer account
+                token = result.accessToken;
+                return deezer.requestAsync(token, {
+                    resource: 'user/me',
+                    method: 'get'
+                })
+            })
+            .then(deezerUser => { //check if account already exist in our db
+                deezerAccountFromApi = deezerUser;
+                return deezerAccountModel.getByDeezerId(deezerUser.id)
+            })
+            .then(deezerAccountFromDb => { //save deezer account to db
+                if(!deezerAccountFromDb) {
+                    console.log("save it");
+                    deezerAccountFromApi.accessToken = token;
+                    return deezerAccountModel.add(deezerAccountFromApi);
+                }
+                deezerAccountFromApi = deezerAccountFromDb;
+            })
+            .then(() => { //load user from db
+                return userModel.get(req.user._id);
+            })
+            .then(user =>{ //add deezer account it to user
+                if(user.deezerAccounts.indexOf(deezerAccountFromApi._id) === -1)
+                    return userModel.addDeezerAccount(user, deezerAccountFromApi);
 
-                        userModel.addDeezerAccount(req.user._id,result._id) //add the _id to the user
-                            .then(user => {
-                                user.deezerAccounts.push(result._id);
-                                res.status(200).send(user)
-                            })
-                            .catch(err => res.status(400).send(err));
-                    });
+                return Promise.resolve({
+                    then : function(resolve) {
+                        resolve(user); }
                 });
             })
+            .then((user) => { //finished
+                // req.user.deezerAccounts.push(deezerAccountFromApi._id);
+                res.status(200).send(user);
+            })
             .catch(function (err) {
-                console.log(err)
-                res.status(500).send(err);
+                if(!err.code) err.code = 500;
+                console.error(err);
+                res.status(err.code).send(err);
             });
     },
 

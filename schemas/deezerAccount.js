@@ -7,6 +7,7 @@ var Schema = mongoose.Schema;
 var deezerAccountSchema = Schema({
     id: { type: Number, index: true, required : [ true, "Name is missing"] },
     name: { type: String, required : [ true, "Name is missing"] },
+    accessToken: {type: String, required : [true,"No access token provided"]},
     email: String,
     status: Number,
     inscription_date: Date,

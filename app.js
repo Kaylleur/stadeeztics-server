@@ -3,7 +3,7 @@ var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+require('./mongo/database').connect();
 var index = require('./routes/index');
 var userRoutes = require('./routes/user');
 var sessionRoutes = require('./routes/session');

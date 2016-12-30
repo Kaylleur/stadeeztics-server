@@ -1,7 +1,6 @@
 /**
  * Created by Thomas on 24/12/2016.
  */
-require('../mongo/database').connect();
 var deezerAccountSchema = require('../schemas/deezerAccount');
 var mongoose = require('mongoose');
 var ObjectId = require('mongoose').Types.ObjectId;
@@ -13,9 +12,12 @@ module.exports = {
         DeezerAccount.findById(id)
             .then(user => callback(null,user));
     },
-    add: function(deezerAccount,callback){
+    getByDeezerId : function(id){
+        return DeezerAccount.findOne({id:id}).exec();
+    },
+    add: function(deezerAccount){
         var newAccount = new DeezerAccount(deezerAccount);
-        newAccount.save(err => callback(err,newAccount)); //should check that with Paul <3
+        return newAccount.save(); //should check that with Paul <3
         // .then(callback(null,newUser))
         // .catch(err => callback(err,user));
     },

@@ -3,7 +3,7 @@
  */
 const mongoose = require('mongoose');
 mongoose.Promise = Promise;
-// mongoose.Promise = require('bluebird'); //setup promise
+//mongoose.Promise = require('bluebird'); //setup promise
 
 module.exports = {
     connect : function() {
