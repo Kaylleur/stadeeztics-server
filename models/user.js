@@ -9,7 +9,7 @@ var User = mongoose.model('User',userSchema);
 
 module.exports = {
     get: function(id){
-        return User.findById(id);
+        return User.findOne({_id:new ObjectId(id)},{password:0});
             // .then(user => callback(null,user));
     },
     signIn: function(name,password,callback){

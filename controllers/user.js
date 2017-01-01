@@ -1,7 +1,6 @@
 /**
  * Created by Thomas on 24/11/2016.
  */
-var mongoose = require('mongoose');
 var userModel = require('../models/user');
 var deezerAccountModel = require('../models/deezerAccount');
 var bluebird = require('bluebird'); // Promises
@@ -58,7 +57,20 @@ module.exports = {
             });
     },
 
-    getAllUsers : function(req,res,next){
-        res.status(200).send(req.decoded);
+    getCurrentUser : function(req,res,next){
+        var user;
+        userModel.get(req.user._id)
+            .then(_user => {
+                user = _user.toObject();//o_O
+                return deezerAccountModel.getByMultipleIds(_user.deezerAccounts);
+            }).then(deezerAccounts => {
+                user.deezerAccounts = deezerAccounts;
+                res.status(200).send(user);
+            })
+            .catch(err =>{
+                console.error(err);
+                res.status(err.code).send(err);
+        });
+
     }
 };

@@ -8,6 +8,6 @@ var userController = require('../controllers/user');
 
 /* GET home page. */
 router.get('/deezer', userController.addDeezerAccount);
-router.get('/', userController.getAllUsers);
+router.get('/', userController.getCurrentUser);
 
 module.exports = router;

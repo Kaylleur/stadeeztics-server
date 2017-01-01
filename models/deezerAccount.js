@@ -8,9 +8,16 @@ var ObjectId = require('mongoose').Types.ObjectId;
 var DeezerAccount = mongoose.model('DeezerAccount',deezerAccountSchema);
 
 module.exports = {
-    get: function(id,callback){
-        DeezerAccount.findById(id)
-            .then(user => callback(null,user));
+    get: function(id){
+        return DeezerAccount.findById(id);
+            // .then(user => callback(null,user));
+    },
+    getByMultipleIds : function(ids){
+        var objectId = [];
+        for (let id of ids) {
+            objectId.push(new ObjectId(id));
+        }
+        return DeezerAccount.find({_id:{$in:objectId}});
     },
     getByDeezerId : function(id){
         return DeezerAccount.findOne({id:id}).exec();
