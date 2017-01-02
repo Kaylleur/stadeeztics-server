@@ -32,9 +32,13 @@ module.exports = {
                     deezerAccountFromApi.accessToken = token;
                     return deezerAccountModel.add(deezerAccountFromApi);
                 }
-                deezerAccountFromApi = deezerAccountFromDb;
+                return Promise.resolve({
+                    then : function(resolve) {
+                        resolve(deezerAccountFromDb); }
+                });
             })
-            .then(() => { //load user from db
+            .then((deezerAccount) => { //load user from db
+                deezerAccountFromApi = deezerAccount;
                 return userModel.get(req.user._id);
             })
             .then(user =>{ //add deezer account it to user
@@ -47,7 +51,7 @@ module.exports = {
                 });
             })
             .then((user) => { //finished
-                // req.user.deezerAccounts.push(deezerAccountFromApi._id);
+                user.deezerAccounts.push(deezerAccountFromApi._id);
                 res.status(200).send(user);
             })
             .catch(function (err) {

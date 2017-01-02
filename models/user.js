@@ -26,7 +26,9 @@ module.exports = {
         User.findOneAndUpdate({_id: new ObjectId(id)},{ $set : body },{},callback);
     },
     addDeezerAccount : function(user,deezerAccount){
-        return User.findOneAndUpdate({_id: new ObjectId(user._id)},{$push:{deezerAccounts:deezerAccount._id}},{});
+        console.log(deezerAccount);
+        console.log(new ObjectId(deezerAccount._id));
+        return User.findOneAndUpdate({_id: new ObjectId(user._id)},{$push:{deezerAccounts:new ObjectId(deezerAccount._id)}},{});
     }
 
 };
