@@ -10,6 +10,7 @@ var sessionRoutes = require('./routes/session');
 var deezerRoutes = require('./routes/deezer');
 
 var authenticator = require('./utils/authenticator');
+var deezerChecker = require('./utils/deezerChecker');
 
 var app = express();
 app.set('env','development');
@@ -21,12 +22,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 /**
- * Route to cover
+ * Route to cover by token
  */
 app.use('/user', authenticator);
 app.use('/deezer', authenticator);
+
+//deezerChecker
+app.use('/deezer', deezerChecker);
 
 /**
  * Routing
