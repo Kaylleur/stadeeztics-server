@@ -8,6 +8,8 @@ var Response = require('../utils/response');
 var Mongo = require('../mongo/database');
 var ObjectId = require('mongodb').ObjectId;
 var DZ = require('node-deezer');
+const url = require('url');
+
 var deezerApi = new DZ();
 var typesAvailable = ["albums","artists","playlists","tracks","radios"];
 
@@ -19,22 +21,39 @@ module.exports = {
     },
     getFullHistory: function(req,res,next){
         console.warn('The history function should be used one time by account !');
+        var deezerAccount;
         //before importing something delete all history
         Mongo.db.collection('histories').deleteMany({deezerAccount:req.params.deezerId})
             .then(res => {
                 return deezerModel.get(req.params.deezerId);// now get the access token from the account
             })
-            .then(deezerAccount => {
-                return deezerApi.requestAsync(deezerAccount.accessToken, {
-                        resource : 'user/' + deezerAccount.id + '/history',
+            .then(deezerFromDb => {
+                deezerAccount = deezerFromDb;
+                return deezerApi.requestAsync(deezerFromDb.accessToken, {
+                        resource : 'user/' + deezerFromDb.id + '/history',
                         method : 'get'
                     });
             })
             .then(history => {
-                for (var i = 0; i < history.data.length; i++) {
-                    var track = history.data[i];
-                    track.deezerAccount = new ObjectId(req.params.deezerId);
-                }
+                // while(history.hasOwnProperty("next")){
+                //     for (var i = 0; i < history.data.length; i++) {
+                //         var track = history.data[i];
+                //         track.deezerAccount = new ObjectId(req.params.deezerId);
+                //     }
+                //     Mongo.db.collection('histories').insertMany(history.data, (err,inserted) => {
+                //         if(err)throw err;
+                //     });
+                //     var index = url.parse(history.next,true).query.index;
+                //     deezerApi.request(deezerAccount.accessToken, {
+                //         resource : 'user/' + deezerAccount.id + '/history',
+                //         method : 'get',
+                //         fields: {index:index}
+                //     },(err,nextHistory)=>{
+                //         console.log(nextHistory.next);
+                //         history = nextHistory;
+                //     });
+                //
+                // }
                 return Mongo.db.collection('histories').insertMany(history.data);
             })
             .then(wrote => {

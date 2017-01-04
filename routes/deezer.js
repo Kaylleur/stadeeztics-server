@@ -5,7 +5,7 @@ var express = require('express');
 var router = express.Router();
 var deezerController = require('../controllers/deezer');
 
-router.get('/history/:deezerId', deezerController.getHistory);
+router.get('/history/:deezerId', deezerController.getFullHistory);
 router.get('/recommendations/:deezerId/:type', deezerController.getRecommendations);
 
 module.exports = router;

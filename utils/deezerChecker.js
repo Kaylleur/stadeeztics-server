@@ -18,7 +18,7 @@ router.use(function(req, res, next){
     //         if (user.deezerAccounts.indexOf(req.params.deezerId) === -1) throw new Response(403, "ACCOUNT_NOT_BELONGING_TO_THIS_USER");
     //     })
     //     .then(() =>{
-    //         next();
+            next();
     //     })
     //     .catch(err =>{
     //         if(!err.code) err.code = 500;
