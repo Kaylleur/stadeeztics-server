@@ -1,19 +1,24 @@
 /**
  * Created by Thomas on 24/11/2016.
  */
-const mongoose = require('mongoose');
+var mongoose = require('mongoose');
+var MongoClient = require('mongodb').MongoClient;
 mongoose.Promise = Promise;
 //mongoose.Promise = require('bluebird'); //setup promise
 
 module.exports = {
     connect : function() {
-        var result = mongoose.connect("mongodb://localhost:27017/stadeeztics");
+        var url = "mongodb://localhost:27017/stadeeztics";
+        var result = mongoose.connect(url);
         var db = mongoose.connection;
         db.on('error', console.error.bind(console, 'connection error:'));
         db.once('open', function() {
-           console.info('Connected successfully.');
+           console.info('Connected successfully with moongose.');
         });
-        return result;
+        MongoClient.connect(url, function(err, db) {
+            if(err)console.error('connection error: ' + err);
+            console.log("Connected successfully with Mongo ");
+        });
     }
 
 };

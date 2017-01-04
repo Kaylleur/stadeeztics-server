@@ -2,35 +2,35 @@
  * Created by Thomas on 24/11/2016.
  */
 var userModel = require('../models/user');
-var deezerAccountModel = require('../models/deezerAccount');
+var deezerModel = require('../models/deezerAccount');
 var bluebird = require('bluebird'); // Promises
 var DZ = require('node-deezer');
-var deezer = new DZ();
+var deezerApi = new DZ();
 var config = require('../config/configuration')
 var sha512 = require('sha512');
 
-bluebird.promisifyAll(deezer);
+bluebird.promisifyAll(deezerApi);
 
 module.exports = {
     addDeezerAccount : function(req,res,next){
         var token,deezerAccountFromApi;
-        deezer.createSessionAsync(config.app.id,config.app.secret,req.query.code) //get token
-            .then(result => { //get info about deezer account
+        deezerApi.createSessionAsync(config.app.id,config.app.secret,req.query.code) //get token
+            .then(result => { //get info about deezerApi account
                 token = result.accessToken;
-                return deezer.requestAsync(token, {
+                return deezerApi.requestAsync(token, {
                     resource: 'user/me',
                     method: 'get'
                 })
             })
             .then(deezerUser => { //check if account already exist in our db
                 deezerAccountFromApi = deezerUser;
-                return deezerAccountModel.getByDeezerId(deezerUser.id)
+                return deezerModel.getByDeezerId(deezerUser.id)
             })
-            .then(deezerAccountFromDb => { //save deezer account to db
+            .then(deezerAccountFromDb => { //save deezerApi account to db
                 if(!deezerAccountFromDb) {
                     console.log("save it");
                     deezerAccountFromApi.accessToken = token;
-                    return deezerAccountModel.add(deezerAccountFromApi);
+                    return deezerModel.add(deezerAccountFromApi);
                 }
                 return Promise.resolve({
                     then : function(resolve) {
@@ -41,7 +41,7 @@ module.exports = {
                 deezerAccountFromApi = deezerAccount;
                 return userModel.get(req.user._id);
             })
-            .then(user =>{ //add deezer account it to user
+            .then(user =>{ //add deezerApi account it to user
                 if(user.deezerAccounts.indexOf(deezerAccountFromApi._id) === -1)
                     return userModel.addDeezerAccount(user, deezerAccountFromApi);
 
@@ -66,7 +66,7 @@ module.exports = {
         userModel.get(req.user._id)
             .then(_user => {
                 user = _user.toObject();//o_O
-                return deezerAccountModel.getByMultipleIds(_user.deezerAccounts);
+                return deezerModel.getByMultipleIds(_user.deezerAccounts);
             }).then(deezerAccounts => {
                 user.deezerAccounts = deezerAccounts;
                 res.status(200).send(user);
@@ -75,6 +75,5 @@ module.exports = {
                 console.error(err);
                 res.status(err.code).send(err);
         });
-
     }
 };

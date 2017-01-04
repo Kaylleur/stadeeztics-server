@@ -7,6 +7,7 @@ require('./mongo/database').connect();
 var index = require('./routes/index');
 var userRoutes = require('./routes/user');
 var sessionRoutes = require('./routes/session');
+var deezerRoutes = require('./routes/deezer');
 
 var authenticator = require('./utils/authenticator');
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
  * Route to cover
  */
 app.use('/user', authenticator);
+app.use('/deezer', authenticator);
 
 /**
  * Routing
@@ -32,6 +34,7 @@ app.use('/user', authenticator);
 app.use('/', index);
 app.use('/user', userRoutes);
 app.use('/session', sessionRoutes);
+app.use('/deezer', deezerRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
