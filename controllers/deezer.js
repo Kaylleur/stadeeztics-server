@@ -1,7 +1,7 @@
 /**
  * Created by Thomas on 02/01/2017.
  */
-var bluebird = require('bluebird'); // Promises
+var Promise = require('bluebird'); // Promises
 var userModel = require('../models/user');
 var deezerModel = require('../models/deezerAccount');
 var Response = require('../utils/response');
@@ -13,7 +13,7 @@ const url = require('url');
 var deezerApi = new DZ();
 var typesAvailable = ["albums","artists","playlists","tracks","radios"];
 
-bluebird.promisifyAll(deezerApi);
+Promise.promisifyAll(deezerApi);
 
 module.exports = {
     getHistory: function(req,res,next){
@@ -34,28 +34,7 @@ module.exports = {
                         method : 'get'
                     });
             })
-            .then(history => {
-                // while(history.hasOwnProperty("next")){
-                //     for (var i = 0; i < history.data.length; i++) {
-                //         var track = history.data[i];
-                //         track.deezerAccount = new ObjectId(req.params.deezerId);
-                //     }
-                //     Mongo.db.collection('histories').insertMany(history.data, (err,inserted) => {
-                //         if(err)throw err;
-                //     });
-                //     var index = url.parse(history.next,true).query.index;
-                //     deezerApi.request(deezerAccount.accessToken, {
-                //         resource : 'user/' + deezerAccount.id + '/history',
-                //         method : 'get',
-                //         fields: {index:index}
-                //     },(err,nextHistory)=>{
-                //         console.log(nextHistory.next);
-                //         history = nextHistory;
-                //     });
-                //
-                // }
-                return Mongo.db.collection('histories').insertMany(history.data);
-            })
+            .then(processHistory)
             .then(wrote => {
                 res.status(200).send(wrote);
             })
@@ -64,6 +43,43 @@ module.exports = {
                 console.error(err);
                 res.status(err.code).send(err);
             });
+
+        function processHistory(history) {
+            return Promise.resolve(history.data)
+                .each(addTrackOwner) 
+                .then(insertHistory)
+                .then(function () {
+                    return history;
+                })
+                .then(getNext);
+
+            function hasNext(history) {
+                return history.hasOwnProperty("next");
+            }
+
+            function addTrackOwner(track) {
+                track.deezerAccount = new ObjectId(req.params.deezerId);
+                return Promise.resolve(track);
+            }
+
+            function insertHistory(data) {
+                return Mongo.db.collection('histories').insertMany(history.data);
+            }
+
+            function getNext(history) {
+                if (hasNext(history)) {
+                    var index = url.parse(history.next, true).query.index
+                    console.log(history.next);
+                    console.log(index);
+                    return deezerApi.requestAsync(deezerAccount.accessToken, {
+                        resource: 'user/' + deezerAccount.id + '/history',
+                        method: 'get',
+                        fields: {index: index}
+                    }).then(processHistory);
+                }
+                return Promise.resolve();
+            }
+        }
     },
     getRecommendations : function(req, res, next){
 

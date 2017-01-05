@@ -29,7 +29,7 @@ app.use('/user', authenticator);
 app.use('/deezer', authenticator);
 
 //deezerChecker
-app.use('/deezer', deezerChecker);
+app.use('/deezer/:deezerId', deezerChecker);
 
 /**
  * Routing
