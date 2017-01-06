@@ -2,9 +2,9 @@
  * Listen on /user
  * Created by Thomas on 23/11/2016.
  */
-var express = require('express');
-var router = express.Router();
-var userController = require('../controllers/user');
+const express = require('express');
+const router = express.Router();
+const userController = require('../controllers/user');
 
 /* GET home page. */
 router.get('/deezer', userController.addDeezerAccount);
