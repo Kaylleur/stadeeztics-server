@@ -7,10 +7,25 @@ const mongoose = require('mongoose');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const User = mongoose.model('User', userSchema);
+const Response = require('../utils/response');
 
 module.exports = {
-	get(id) {
-		return User.findOne({_id: new ObjectId(id)}, {password: 0});
+	/**
+	 *
+	 * @param id : ObjectId
+	 * @param includePassword : boolean
+	 * @returns {Query|*|Promise}
+	 */
+	get(id,includePassword) {
+		let password = {password: 0};
+		if(includePassword) password = {};
+		if (id.match(/^[0-9a-fA-F]{24}$/) == null) {
+			console.warn("BAD OBJECT ID INTO QUERY " + id);
+			throw new Response(404, 'NOT FOUND');
+		}
+
+		var _id = ObjectId(id);
+		return User.findOne({_id: _id}, password );
 	},
 
 	signIn(name, password, callback) {
@@ -23,8 +38,8 @@ module.exports = {
 		return newUser.save();
 	},
 
-	edit(id, body, callback) {
-		User.findOneAndUpdate({_id: new ObjectId(id)}, {$set: body}, {}, callback);
+	edit(id, body) {
+		return User.findOneAndUpdate({_id: new ObjectId(id)}, {$set: body}, {});
 	},
 
 	addDeezerAccount(user, deezerAccount) {
