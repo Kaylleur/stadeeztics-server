@@ -9,6 +9,7 @@ const DZ = require('node-deezer');
 let deezerApi = new DZ();
 const config = require('../config/configuration');
 const sha512 = require('sha512');
+const Response = require('../utils/response');
 
 bluebird.promisifyAll(deezerApi);
 
@@ -76,8 +77,50 @@ module.exports = {
 			res.status(200).send(user);
 		})
 			.catch(err => {
+				if (!err.code) err.code = 500;
 				console.error(err);
 				res.status(err.code).send(err);
 			});
 	},
+
+	getUser(req,res) {
+		let user;
+		userModel.get(req.params._id)
+			.then(_user => {
+				if(!_user) throw new Response(404,"USER NOT FOUND");
+
+				user = _user.toObject();
+
+				return deezerModel.getByMultipleIds(_user.deezerAccounts);
+			}).then(deezerAccounts => {
+			user.deezerAccounts = deezerAccounts;
+			res.status(200).send(user);
+		})
+			.catch(err => {
+				if (!err.code) err.code = 500;
+				console.error(err);
+				res.status(err.code).send(err);
+			});
+	},
+
+	updateUser(req,res) {
+		try {
+			if(!req.body._id) throw new Response(400,"MISSING _ID");
+			let password = sha512(config.salt.before + req.body.password + config.salt.after).toString('hex');
+			userModel.get(req.body._id,true)
+				.then(user => {
+					if(password != user.password){
+						console.warn("Password not matching");
+						throw new Response(403,"BAD PASSWORD");
+					}
+				})
+
+			//TODO NOT IMPLEMENTED YET
+
+		}catch(err){
+			if (!err.code) err.code = 500;
+			console.error(err);
+			res.status(err.code).send(err);
+		}
+	}
 };
