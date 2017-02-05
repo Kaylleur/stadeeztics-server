@@ -9,5 +9,6 @@ const sessionController = require('../controllers/session');
 /* GET home page. */
 router.post('/signIn', sessionController.signIn);
 router.post('/', sessionController.signUp);
+router.get('/checkToken', sessionController.checkToken);
 
 module.exports = router;

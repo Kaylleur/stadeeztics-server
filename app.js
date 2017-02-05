@@ -8,6 +8,7 @@ var index = require('./routes/index');
 var userRoutes = require('./routes/user');
 var sessionRoutes = require('./routes/session');
 var deezerRoutes = require('./routes/deezer');
+var corsMiddleware = require('./utils/corsMiddleware');
 
 var authenticator = require('./utils/authenticator');
 var deezerChecker = require('./utils/deezerChecker');
@@ -21,12 +22,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(corsMiddleware.allowCrossDomain);
 
 /**
  * Route to cover by token
  */
 app.use('/user', authenticator);
 app.use('/deezer', authenticator);
+app.use('/session/checkToken', authenticator);
 
 //deezerChecker
 app.use('/deezer/:deezerId', deezerChecker);

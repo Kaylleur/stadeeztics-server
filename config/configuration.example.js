@@ -20,5 +20,10 @@ module.exports = {
 		issuer: os.hostname(),
 		subject: 'session',
 		audience: '' //list of possible recipient ?
+	},
+	cors : {
+		urls : 'URL_AUTHORIZED',
+		method : 'GET,PUT,POST,DELETE',
+		headers : ''
 	}
 };

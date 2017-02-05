@@ -13,8 +13,8 @@ module.exports = {
 		return User.findOne({_id: new ObjectId(id)}, {password: 0});
 	},
 
-	signIn(name, password, callback) {
-		User.findOne({name: name, password: password}, {name: 1})
+	signIn(mail, password, callback) {
+		User.findOne({mail: mail, password: password}, {name: 1})
 			.then(user => callback(null, user));
 	},
 
@@ -28,9 +28,11 @@ module.exports = {
 	},
 
 	addDeezerAccount(user, deezerAccount) {
-		console.log(deezerAccount);
-		console.log(new ObjectId(deezerAccount._id));
 		return User.findOneAndUpdate({_id: new ObjectId(user._id)}, {$push: {deezerAccounts: new ObjectId(deezerAccount._id)}}, {});
 	},
+
+	checkEmailUnique(mail){
+		return User.find({mail:mail});
+	}
 
 };

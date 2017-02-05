@@ -10,6 +10,7 @@
     "body-parser": "~1.15.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",
+    "email-validator": "^1.0.7",
     "express": "~4.14.0",
     "jsonwebtoken": "^7.1.9",
     "lodash": "^4.17.4",

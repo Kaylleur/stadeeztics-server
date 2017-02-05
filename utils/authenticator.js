@@ -16,9 +16,9 @@ router.use(function(req, res, next) {
 	// decode token
 	if (token) {
 		// verifies secret and checks exp
-		jwt.verify(token, config.jwt.secret, {algorithms: 'HS512'}, function(err, verify) {
+		jwt.verify(token, config.jwt.secret, {algorithms: config.session.algorithm}, function(err, verify) {
 			if (err) {
-				return res.status(400).send({message: 'FAILED_TO_AUTHENTICATE_TOKEN', err: err});
+				return res.status(400).send({message: 'FAILED TO AUTHENTICATE TOKEN', err: err});
 			} else {
 				// if everything is good, save to request for use in other routes
 				req.user = verify._doc;
@@ -30,7 +30,7 @@ router.use(function(req, res, next) {
 		// if there is no token
 		// return an error
 		return res.status(403).send({
-			message: 'NO_TOKEN_PROVIDED'
+			message: 'NO TOKEN PROVIDED'
 		});
 	}
 });
