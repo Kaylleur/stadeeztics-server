@@ -15,24 +15,24 @@ module.exports = {
 	 */
 	signIn(req, res) {
 		var password = sha512(config.salt.before + req.body.password + config.salt.after).toString('hex');
-		userModel.signIn(req.body.mail, password, function(err, result) {
-			try {
-				if (err) {
-					throw new Error(err.message);
+		userModel.signIn(req.body.mail, password)
+			.then(result => {
+				try {
+					if (!result) {
+						res.status(404).send({message: 'NOT FOUND'});
+						return;
+					}
+
+					let token = jwt.sign(result, config.jwt.secret, config.session);
+
+					res.send({token: token, user:result});
+				} catch (exception) {
+					console.error(exception);
+					res.status(500).send(exception);
 				}
-
-				if (!result) {
-					res.status(404).send({message: 'NOT FOUND'});
-					return;
-				}
-
-				let token = jwt.sign(result, config.jwt.secret, config.session);
-
-				res.send({token: token});
-			} catch (exception) {
-				console.error(exception);
-				res.status(500).send(exception);
-			}
+			})
+			.catch(err => {
+				throw new Error(err.message);
 		});
 	},
 

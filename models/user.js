@@ -19,6 +19,7 @@ module.exports = {
 	get(id,includePassword) {
 		let password = {password: 0};
 		if(includePassword) password = {};
+
 		if (id.match(/^[0-9a-fA-F]{24}$/) == null) {
 			console.warn("BAD OBJECT ID INTO QUERY " + id);
 			throw new Response(404, 'NOT FOUND');
@@ -28,9 +29,8 @@ module.exports = {
 		return User.findOne({_id: _id}, password );
 	},
 
-	signIn(mail, password, callback) {
-		User.findOne({mail: mail, password: password}, {name: 1})
-			.then(user => callback(null, user));
+	signIn(mail, password) {
+		return User.findOne({mail: mail, password: password}, {name: 1});
 	},
 
 	add(user) {
