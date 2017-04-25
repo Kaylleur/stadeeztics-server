@@ -9,6 +9,7 @@ var emailValidator = require("email-validator");
 const userSchema = Schema({
 	name: {type: String, index: true, required: [true, "Name is missing"]},
 	password: {type: String,required: [true, "Password is missing"]},
+	gravatar: {type: String, required : true},
 	mail: {
 		type: String,
 		validate: {

@@ -8,10 +8,10 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 const User = mongoose.model('User', userSchema);
 const Response = require('../utils/response');
+const md5 = require('md5');
 
 module.exports = {
 	/**
-	 *
 	 * @param id : ObjectId
 	 * @param includePassword : boolean
 	 * @returns {Query|*|Promise}
@@ -35,6 +35,7 @@ module.exports = {
 
 	add(user) {
 		let newUser = new User(user);
+		user.gravatar = this.getGravatar(newUser);
 		return newUser.save();
 	},
 
@@ -48,6 +49,11 @@ module.exports = {
 
 	checkEmailUnique(mail){
 		return User.find({mail:mail});
+	},
+
+	getGravatar(user){
+		let hash = md5(mail.trim().toLowerCase());
+		return "https://www.gravatar.com/avatar/" + hash;
 	}
 
 };
