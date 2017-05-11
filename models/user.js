@@ -30,7 +30,7 @@ module.exports = {
 	},
 
 	signIn(mail, password) {
-		return User.findOne({mail: mail, password: password}, {name: 1});
+		return User.findOne({mail: mail, password: password}, {name: 1,gravatar:1});
 	},
 
 	add(user) {
