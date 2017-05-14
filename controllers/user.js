@@ -87,7 +87,7 @@ module.exports = {
 		let user;
 		userModel.get(req.params._id)
 			.then(_user => {
-				if(!_user) throw new Response(404,"USER NOT FOUND");
+				if(!_user) throw new Response(404,"User not found");
 
 				user = _user.toObject();
 
@@ -105,13 +105,13 @@ module.exports = {
 
 	updateUser(req,res) {
 		try {
-			if(!req.body._id) throw new Response(400,"MISSING _ID");
+			if(!req.body.id) throw new Response(400,"missing id");
 			let password = sha512(config.salt.before + req.body.password + config.salt.after).toString('hex');
-			userModel.get(req.body._id,true)
+			userModel.get(req.body.id,true)
 				.then(user => {
 					if(password != user.password){
 						console.warn("Password not matching");
-						throw new Response(403,"BAD PASSWORD");
+						throw new Response(403,"Bad password");
 					}
 				})
 

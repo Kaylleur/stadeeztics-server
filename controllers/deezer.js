@@ -69,7 +69,7 @@ module.exports = {
 					}).then(processPartialHistory);
 				}
 
-				return Promise.resolve({message: 'RECENT_HISTORY_HAS_BEEN_LOADED'});
+				return Promise.resolve(new Response(200,"Recent history has been loaded"));
 			}
 
 			function goToNext (history) {
@@ -143,7 +143,7 @@ module.exports = {
 					}).then(processFullHistory);
 				}
 
-				return Promise.resolve({message: 'FULL_HISTORY_HAS_BEEN_LOADED'});
+				return Promise.resolve(new Response(200,'Full history loaded'));
 			}
 
 			function hasNext (history) {

@@ -9,6 +9,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const User = mongoose.model('User', userSchema);
 const Response = require('../utils/response');
 const md5 = require('md5');
+const ObjectIdTester = require('../utils/objectIdTester');
 
 module.exports = {
 	/**
@@ -20,12 +21,12 @@ module.exports = {
 		let password = {password: 0};
 		if(includePassword) password = {};
 
-		if (id.match(/^[0-9a-fA-F]{24}$/) == null) {
+		if (!ObjectIdTester.isValid(id)) {
 			console.warn("BAD OBJECT ID INTO QUERY " + id);
 			throw new Response(404, 'NOT FOUND');
 		}
 
-		var _id = ObjectId(id);
+		let _id = ObjectId(id);
 		return User.findOne({_id: _id}, password );
 	},
 
@@ -34,8 +35,8 @@ module.exports = {
 	},
 
 	add(user) {
-		let newUser = new User(user);
-		user.gravatar = this.getGravatar(newUser);
+        user.gravatar = this.getGravatar(user);
+        let newUser = new User(user);
 		return newUser.save();
 	},
 
@@ -52,7 +53,7 @@ module.exports = {
 	},
 
 	getGravatar(user){
-		let hash = md5(mail.trim().toLowerCase());
+		let hash = md5(user.mail.trim().toLowerCase());
 		return "https://www.gravatar.com/avatar/" + hash;
 	}
 

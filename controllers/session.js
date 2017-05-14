@@ -2,10 +2,11 @@
 		* Created by Thomas on 27/11/2016.
 		* Project : server
 		*/
-	const userModel = require('../models/user');
+const userModel = require('../models/user');
 const sha512 = require('sha512');
 const config = require('../config/configuration');
 const jwt = require('jsonwebtoken');
+const Response = require('../utils/response')
 
 module.exports = {
 	/**
@@ -19,7 +20,7 @@ module.exports = {
 			.then(result => {
 				try {
 					if (!result) {
-						res.status(404).send({message: 'NOT FOUND'});
+						res.status(404).send(new Response(404,"User Not found"));
 						return;
 					}
 
@@ -37,13 +38,21 @@ module.exports = {
 	},
 
 	signUp(req, res) {
-		var user = req.body;
+		let user = req.body;
+
+		if(user.password !== user.password2) {
+            res.status(400).send(new Response(400,"Password are not same"));
+            return;
+        }
+        delete user.password2;
+
 		if (user.password) user.password = sha512(config.salt.before + req.body.password + config.salt.after)
 			.toString('hex');
+
 		userModel.checkEmailUnique(user.mail)
 			.then(users => {
 				if(users.length > 0){
-					res.status(400).send({code: 400 ,message : 'MAIL ALREADY REGISTERED'});
+					res.status(400).send(new Response(400,"Email not unique"));
 					return;
 				}
 				return userModel.add(user);
@@ -57,6 +66,6 @@ module.exports = {
 	},
 
 	checkToken(req,res){
-		res.status(200).send({code : 200, message : 'TOKEN VALID'});
+		res.status(200).send(new Response(200,"Token valid"));
 	}
 };

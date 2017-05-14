@@ -4,7 +4,7 @@
  */
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-var emailValidator = require("email-validator");
+const emailValidator = require("email-validator");
 
 const userSchema = Schema({
 	name: {type: String, index: true, required: [true, "Name is missing"]},
